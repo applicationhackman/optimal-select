@@ -278,6 +278,11 @@ function checkClass (element, path, ignore, parent)
 {
   let className = escapeValue(element.getAttribute('class'))
 
+  if (checkIgnore(ignore.class, className))
+  {
+    return false
+  }
+
   if(element.classList.length > 0)
   {
       let classNameList = element.classList;
@@ -293,10 +298,6 @@ function checkClass (element, path, ignore, parent)
       }
   }
 
-  if (checkIgnore(ignore.class, className))
-  {
-    return false
-  }
   const matches = parent.getElementsByClassName(className)
 
   if (matches.length === 1)
