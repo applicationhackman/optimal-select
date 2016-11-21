@@ -125,6 +125,7 @@ export default function match (node, options) {
  * @return {boolean}                - [description]
  */
 function checkClassGlobal (element, path, ignore, root) {
+  // console.log(" checkClassGlobal is here ",element, path, ignore, root);
   return checkClass(element, path, ignore, root)
 }
 
@@ -137,6 +138,7 @@ function checkClassGlobal (element, path, ignore, root) {
  * @return {boolean}                - [description]
  */
 function checkClassLocal (element, path, ignore) {
+  // console.log( " checkClassLocal is here ",element, path, ignore);
   return checkClass(element, path, ignore, element.parentNode)
 }
 
@@ -148,8 +150,12 @@ function checkClassLocal (element, path, ignore) {
  * @param  {Object}         ignore  - [description]
  * @return {boolean}                - [description]
  */
-function checkClassChild (element, path, ignore) {
+function checkClassChild (element, path, ignore)
+{
   const className = escapeValue(element.getAttribute('class'))
+
+  // console.log(" checkClassChild ",element, path, ignore);
+
   if (checkIgnore(ignore.class, className)) {
     return false
   }
@@ -268,13 +274,33 @@ function checkId (element, path, ignore) {
  * @param  {HTMLElement}    parent  - [description]
  * @return {boolean}                - [description]
  */
-function checkClass (element, path, ignore, parent) {
-  const className = escapeValue(element.getAttribute('class'))
-  if (checkIgnore(ignore.class, className)) {
+function checkClass (element, path, ignore, parent)
+{
+  let className = escapeValue(element.getAttribute('class'))
+
+  if(element.classList.length > 0)
+  {
+      let classNameList = element.classList;
+      var nclassName = "";
+
+      for (var i = 0; i < classNameList.length; i++)
+      {
+          if(parent.getElementsByClassName(classNameList[i]).length == 1)
+          {
+            className = classNameList[i];
+            break;
+          }
+      }
+  }
+
+  if (checkIgnore(ignore.class, className))
+  {
     return false
   }
   const matches = parent.getElementsByClassName(className)
-  if (matches.length === 1) {
+
+  if (matches.length === 1)
+  {
     path.unshift(`.${className.trim().replace(/\s+/g, '.')}`)
     return true
   }
